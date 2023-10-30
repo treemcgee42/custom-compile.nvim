@@ -78,4 +78,5 @@ array (in fact, that's how we define the Zig error format internally).
 
 - [`greyjoy.nvim`](https://github.com/desdic/greyjoy.nvim/tree/main)
 was an inspiration and helped me get started writing my own plugin. 
-Thank you!
+- [This video](https://www.youtube.com/watch?v=vB3NT9QIXo8) by Gavin Freeborn
+explains the builin `:make` and `:compile` features of Vim really well.
