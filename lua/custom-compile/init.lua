@@ -18,6 +18,7 @@ end
 
 local Plugin = {
 	settings = nil,
+	initialized = false,
 	task_definitions = nil,
 	default_task_idx = nil,
 	task_names = nil,
@@ -30,6 +31,11 @@ local Plugin = {
 }
 
 Plugin.do_task = function(task_idx)
+	if not Plugin.initialized then
+		print("custom-compile not initialized.")
+		return
+	end
+
 	local definition = Plugin.task_definitions[task_idx]
 
 	vim.cmd(
@@ -55,6 +61,11 @@ Plugin.do_task = function(task_idx)
 end
 
 Plugin.do_default_task = function()
+	if not Plugin.initialized then
+		print("custom-compile not initialized.")
+		return
+	end
+
 	if not Plugin.default_task_idx then
 		print("No default task set.")
 		return
@@ -64,6 +75,11 @@ Plugin.do_default_task = function()
 end
 
 Plugin.list_tasks = function()
+	if not Plugin.initialized then
+		print("custom-compile not initialized.")
+		return
+	end
+
 	vim.ui.select(
 		Plugin.task_names,
 		{ prompt = 'Select a task:' },
@@ -98,7 +114,11 @@ Plugin.setup = function(opts)
 
 	-- Get the table returned by the definition file. This definines all available tasks.
 	-- TODO: validate `definitions` if not nil.
-	local definitions = dofile(settings.definition_file)
+	local status, definitions = pcall(dofile, settings.definition_file)
+	if not status then
+		return
+	end
+
 	Plugin.task_definitions = definitions
 
 	--- Create an array of task names. Each task in the `definitions` table has a `name` field.
@@ -117,6 +137,8 @@ Plugin.setup = function(opts)
 
 	vim.keymap.set("n", settings.key_bindings.do_default_task, Plugin.do_default_task)
 	vim.keymap.set("n", settings.key_bindings.list_taks, Plugin.list_tasks)
+
+	Plugin.initialized = true
 end
 
 return Plugin
