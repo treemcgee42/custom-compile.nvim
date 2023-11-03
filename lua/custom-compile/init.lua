@@ -116,6 +116,7 @@ Plugin.setup = function(opts)
 	-- TODO: validate `definitions` if not nil.
 	local status, definitions = pcall(dofile, settings.definition_file)
 	if not status then
+		print("Error loading custom-compile definition file.")
 		return
 	end
 
@@ -140,5 +141,14 @@ Plugin.setup = function(opts)
 
 	Plugin.initialized = true
 end
+
+Plugin.redo_setup = function()
+	Plugin.setup(Plugin.settings)
+end
+
+vim.api.nvim_create_autocmd("DirChanged", {
+	pattern = "*",
+	callback = Plugin.redo_setup,
+})
 
 return Plugin
